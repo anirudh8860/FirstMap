@@ -4,13 +4,64 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    GoogleMap gmap;
+    boolean mapReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button b= (Button)findViewById(R.id.btnMap);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mapReady){
+                    gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                }
+            }
+        });
+        Button bHybrid =(Button)findViewById(R.id.btnHybrid);
+        bHybrid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mapReady){
+                    gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                }
+            }
+        });
+        Button bSat =(Button)findViewById(R.id.btnSatellite);
+        bSat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mapReady){
+                    gmap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                }
+            }
+        });
+        Button bTerrain =(Button)findViewById(R.id.btnTerrain);
+        bTerrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mapReady){
+                    gmap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                }
+            }
+        });
+
+        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -33,5 +84,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mapReady = true;
+        gmap = googleMap;
+        LatLng NewDelhi = new LatLng(28.6139, 77.2090);
+        CameraPosition target = CameraPosition.builder().target(NewDelhi).zoom(15).tilt(65).build();
+        gmap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
     }
 }
